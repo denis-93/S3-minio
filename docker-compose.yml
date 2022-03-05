@@ -1,0 +1,35 @@
+version: "3"
+
+services:
+
+  backend:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/S3Project
+    ports:
+      - "8000:8000"
+    networks:
+      - public
+
+  minio:
+    image: minio/minio
+    env_file:
+      - .docker-compose/.env
+    container_name: minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    networks:
+      - public
+    volumes:
+      - minio_volume:/data
+    command: server --console-address ":9001" /data
+
+networks:
+  public:
+    driver: bridge
+
+volumes:
+  minio_volume:
